@@ -46,6 +46,23 @@ h2 {
 	border: solid 2px black;
 }
 
+.upgrade.balanced {
+	width: 200px;
+	height: 150px;
+	margin: 5px;
+	font-size: 12px;
+	transition-duration: 0.5s;
+}
+.upgrade.balanced.can {
+	cursor: pointer;
+}
+.closed {
+	background-color: lightgray;
+}
+.bought {
+	background-color: lightgreen;
+}
+
 .input_upgrade {
 	width: 100%;
 	height: 100%;

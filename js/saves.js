@@ -20,6 +20,7 @@ const PLAYER_DATA = {
     numbers: {},
     start: false,
     balancedPoints: E(0),
+    balancedUpgs: [],
 }
 
 function wipe() {
@@ -40,11 +41,12 @@ function checkIfUndefined() {
     if (player.numbers === undefined) player.numbers = PLAYER_DATA.numbers
     if (player.start === undefined) player.start = PLAYER_DATA.start
     if (player.balancedPoints === undefined) player.balancedPoints = PLAYER_DATA.balancedPoints
+    if (player.balancedUpgs === undefined) player.balancedUpgs = PLAYER_DATA.balancedUpgs
 }
 
 function convertToExpNum() {
     player.points = ex(player.points)
-    for (let x = 1; x <= 3; x++) if (player.numbers[x] !== undefined) player.numbers[x] = ex(player.numbers[x])
+    for (let x = 1; x <= FUNS.getSlot(); x++) if (player.numbers[x] !== undefined) player.numbers[x] = ex(player.numbers[x])
     player.balancedPoints = ex(player.balancedPoints)
 }
 

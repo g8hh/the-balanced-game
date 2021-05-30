@@ -19,7 +19,7 @@
         (+{{ format(FUNS.getPointsGain(), 1) }}/s)<br><br>
         {{ format(FUNS.getSpentNumbers(), 1) }}/{{ format(FUNS.getMaxNumbers(), 1) }} Numbers used.<br><br>
         <div class='table_center'>
-            <div v-for='x in 3' class='upgrade'>
+            <div v-for='x in FUNS.getSlot()' class='upgrade'>
                 <div style='height: 30px; display: flex; justify-content: space-between; align-items: center;' v-if='!player.start'>
                     <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.addUpgrade(x, -1)">◄</div>
                     <div style='font-size: 20px;'>{{ UPGRADES.getUpgrade(x) }}</div>
@@ -34,7 +34,18 @@
         </div><br>
         <button class="button_start" onclick='FUNS.startGain()'>{{ FUNS.startMsg() }}</button><br><br>
         <div v-if='player.start'>Need to reach {{ format(player.points, 1) }}/{{ format(FUNS.getFinishPoints(), 1) }} points to get balanced points!</div><br>
-        <span v-if='player.balancedPoints.gte(1)'>You have <h2>{{ format(player.balancedPoints, 0) }}</h2> balanced points.</span>
+        <div v-if='player.balancedPoints.gte(1)'>
+            You have <h2>{{ format(player.balancedPoints, 0) }}</h2> balanced points<br>
+            You have {{ format(UPGRADES.balanced.getUnspentBP(), 0) }} unspent balanced points<br><br>
+            <div class='table_center'>
+                <div v-for='x in UPGRADES.balanced.cols' class="upgrade balanced" v-on:click="UPGRADES.balanced.buy(x)" v-bind:class="{closed: !UPGRADES.balanced.canBuy(x), can: UPGRADES.balanced.canBuy(x), bought: player.balancedUpgs.includes(x)}">
+                    <div style='height: 100px;'>
+                        <b>{{ UPGRADES.balanced[x].title }}</b><br>
+                        {{ UPGRADES.balanced[x].desc }}
+                    </div>Cost: {{ format(UPGRADES.balanced[x].cost(), 0) }} BP
+                </div>
+            </div>
+        </div>
 
         <div style='display: none'>{{ player.time }}</div>
     </div>

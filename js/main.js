@@ -11,7 +11,7 @@ const FUNS = {
     getNumber(x) { return player.numbers[x] !== undefined ? player.numbers[x] : E(1) },
     getPointsGain() {
         let mult = E(1)
-        for (let x = 1; x <= 3; x++) mult = mult.mul(UPGRADES.types[UPGRADES.getUpgrade(x)].effect(this.getNumber(x)))
+        for (let x = 1; x <= this.getSlot(); x++) mult = mult.mul(UPGRADES.types[UPGRADES.getUpgrade(x)].effect(this.getNumber(x)))
         return mult
     },
     startGain() {
@@ -24,12 +24,13 @@ const FUNS = {
     getMaxNumbers() { return E(10) },
     getSpentNumbers() {
         let num = E(0)
-        for (let x = 1; x <= 3; x++) num = num.add(this.getNumber(x))
+        for (let x = 1; x <= this.getSlot(); x++) num = num.add(this.getNumber(x))
         return num
     },
-    getFinishPoints(x=player.balancedPoints) { return E(10).pow(x.add(1).pow(1.1).sub(1)).mul(1e5) },
+    getFinishPoints(x=player.balancedPoints) { return E(8).pow(x).mul(15000) },
     canFinish() { return player.points.gte(this.getFinishPoints()) },
     startMsg() { return player.start?(this.canFinish()?"Complete to get 1 balanced points":"Cancel to gain points"):"Start to gain points, but you can't pick numbers & upgrades!" },
+    getSlot() { return 3 + (player.balancedUpgs.includes(2)?1:0) },
 }
 
 function loop() {
