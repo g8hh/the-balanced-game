@@ -27,7 +27,7 @@ const FUNS = {
         for (let x = 1; x <= this.getSlot(); x++) num = num.add(this.getNumber(x))
         return num
     },
-    getFinishPoints(x=player.balancedPoints) { return E(8).pow(x).mul(15000) },
+    getFinishPoints(x=player.balancedPoints) { return E(8).pow(x).mul(15000).mul(E(3).pow(x.gte(6)?x.sub(5).pow(1.1):0)) },
     canFinish() { return player.points.gte(this.getFinishPoints()) },
     startMsg() { return player.start?(this.canFinish()?"Complete to get 1 balanced points":"Cancel to gain points"):"Start to gain points, but you can't pick numbers & upgrades!" },
     getSlot() { return 3 + (player.balancedUpgs.includes(2)?1:0) },

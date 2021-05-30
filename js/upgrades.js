@@ -33,7 +33,7 @@ const UPGRADES = {
             effect(x=E(1)) {
                 let num = E(1)
                 if (player.balancedUpgs.includes(1)) num = x.pow(0.5)
-                let eff = player.points.add(1).log10().add(1).pow(1.25).mul(num)
+                let eff = player.points.add(1).log10().add(1).pow(1.25).mul(num).pow(player.balancedUpgs.includes(4)?1.5:1)
                 return eff
             },
         },
@@ -58,7 +58,7 @@ const UPGRADES = {
         buy(x) {
             if (this.canBuy(x)) player.balancedUpgs.push(x)
         },
-        cols: 3,
+        cols: 4,
         1: {
             title: "Boost",
             desc: "Makes all numbers better",
@@ -72,6 +72,11 @@ const UPGRADES = {
         3: {
             title: "More options",
             desc: "Adds a new effect for numbers",
+            cost() { return E(2) },
+        },
+        4: {
+            title: "Strong Upgrade",
+            desc: "Makes Number Upgrade #2 be stronger",
             cost() { return E(2) },
         },
     },
