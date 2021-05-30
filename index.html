@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="js/ExpantaNum.js"></script>
+    <script src="js/saves.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/upgrades.js"></script>
+    <script src="js/v.js"></script>
+
+    <title>Title</title>
+</head>
+<body onload="loadGame()">
+    <div id='app'>
+        You have <h2>{{ format(player.points, 1) }}</h2> points<br>
+        (+{{ format(FUNS.getPointsGain(), 1) }}/s)<br><br>
+        {{ format(FUNS.getSpentNumbers(), 1) }}/{{ format(FUNS.getMaxNumbers(), 1) }} Numbers used.<br><br>
+        <div class='table_center'>
+            <div v-for='x in 3' class='upgrade'>
+                <div style='height: 30px; display: flex; justify-content: space-between; align-items: center;' v-if='!player.start'>
+                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.addUpgrade(x, -1)">◄</div>
+                    <div style='font-size: 20px;'>{{ UPGRADES.getUpgrade(x) }}</div>
+                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.addUpgrade(x, 1)">►</div>
+                </div><div style='height: 150px'>
+                    Picked Number: <b>{{ format(FUNS.getNumber(x), 1) }}</b><br>
+                    {{ UPGRADES.types[UPGRADES.getUpgrade(x)].desc(x) }}
+                </div><div style='height: 30px' v-if='!player.start'>
+                    <input placeholder="Input Number" class='input_upgrade' v-model='player.pickedNumbers[x]'>
+                </div><div class="set_button" v-on:click='FUNS.setNumber(x)' v-if='!player.start'>Set</div>
+            </div>
+        </div><br>
+        <button class="button_start" onclick='FUNS.startGain()'>{{ FUNS.startMsg() }}</button><br><br>
+        <div v-if='player.start'>Need to reach {{ format(player.points, 1) }}/{{ format(FUNS.getFinishPoints(), 1) }} points to get balanced points!</div><br>
+        <span v-if='player.balancedPoints.gte(1)'>You have <h2>{{ format(player.balancedPoints, 0) }}</h2> balanced points.</span>
+
+        <div style='display: none'>{{ player.time }}</div>
+    </div>
+</body>
+</html>
