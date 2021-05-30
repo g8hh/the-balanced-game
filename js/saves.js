@@ -1,4 +1,11 @@
 function E(x){return new ExpantaNum(x)};
+function ex(x){
+    let nx = new E(0);
+    nx.array = x.array;
+    nx.sign = x.sign;
+    nx.layer = x.layer;
+    return nx;
+}
 
 function calc(dt) {
     player.time += dt
@@ -20,17 +27,25 @@ function wipe() {
 }
 
 function loadPlayer(load) {
-    //player = load
+    player = load
     checkIfUndefined()
     convertToExpNum()
+    player.pickedNumbers = PLAYER_DATA.pickedNumbers
 }
 
 function checkIfUndefined() {
-
+    if (player.time === undefined) player.time = PLAYER_DATA.time
+    if (player.points === undefined) player.points = PLAYER_DATA.points
+    if (player.pickedUpgs === undefined) player.pickedUpgs = PLAYER_DATA.pickedUpgs
+    if (player.numbers === undefined) player.numbers = PLAYER_DATA.numbers
+    if (player.start === undefined) player.start = PLAYER_DATA.start
+    if (player.balancedPoints === undefined) player.balancedPoints = PLAYER_DATA.balancedPoints
 }
 
 function convertToExpNum() {
-
+    player.points = ex(player.points)
+    for (let x = 1; x <= 3; x++) if (player.numbers[x] !== undefined) player.numbers[x] = ex(player.numbers[x])
+    player.balancedPoints = ex(player.balancedPoints)
 }
 
 function save(){
