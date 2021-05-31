@@ -21,6 +21,10 @@ const PLAYER_DATA = {
     start: false,
     balancedPoints: E(0),
     balancedUpgs: [],
+    SBPoints: E(0),
+    balancedStart: false,
+    upgradeSlot: {},
+    SBTypes: {1: E(0), 2: E(0)},
 }
 
 function wipe() {
@@ -32,6 +36,17 @@ function loadPlayer(load) {
     checkIfUndefined()
     convertToExpNum()
     player.pickedNumbers = PLAYER_DATA.pickedNumbers
+    player.upgradeSlot = PLAYER_DATA.upgradeSlot
+    updateUpgradeSlot()
+}
+
+function updateUpgradeSlot() {
+    player.upgradeSlot = {}
+    let n = 1
+    for (let x = 1; x <= UPGRADES.getLength(); x++) if (UPGRADES.getUpgradeSlots()[x] !== undefined ? UPGRADES.getUpgradeSlots()[x] : false) {
+        player.upgradeSlot[n] = x
+        n++
+    }
 }
 
 function checkIfUndefined() {
@@ -42,12 +57,17 @@ function checkIfUndefined() {
     if (player.start === undefined) player.start = PLAYER_DATA.start
     if (player.balancedPoints === undefined) player.balancedPoints = PLAYER_DATA.balancedPoints
     if (player.balancedUpgs === undefined) player.balancedUpgs = PLAYER_DATA.balancedUpgs
+    if (player.SBPoints === undefined) player.SBPoints = PLAYER_DATA.SBPoints
+    if (player.balancedStart === undefined) player.balancedStart = PLAYER_DATA.balancedStart
+    if (player.SBTypes === undefined) player.SBTypes = PLAYER_DATA.SBTypes
 }
 
 function convertToExpNum() {
     player.points = ex(player.points)
     for (let x = 1; x <= FUNS.getSlot(); x++) if (player.numbers[x] !== undefined) player.numbers[x] = ex(player.numbers[x])
     player.balancedPoints = ex(player.balancedPoints)
+    player.SBPoints = ex(player.SBPoints)
+    for (let x = 1; x <= 2; x++) player.SBTypes[x] = ex(player.SBTypes[x])
 }
 
 function save(){
