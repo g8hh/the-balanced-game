@@ -7,7 +7,9 @@ function loadVue() {
 			player,
 			FUNS,
 			UPGRADES,
-            format,
+			TABS,
+			format,
+			msg,
         }
 	})
 }

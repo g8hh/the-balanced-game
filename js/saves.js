@@ -14,6 +14,7 @@ function calc(dt) {
 
 const PLAYER_DATA = {
     time: 0,
+    tab: 1,
     points: E(0),
     pickedNumbers: {},
     pickedUpgs: {},
@@ -37,6 +38,7 @@ function loadPlayer(load) {
     convertToExpNum()
     player.pickedNumbers = PLAYER_DATA.pickedNumbers
     player.upgradeSlot = PLAYER_DATA.upgradeSlot
+    player.tab = PLAYER_DATA.tab
     updateUpgradeSlot()
 }
 
@@ -89,7 +91,7 @@ function exporty() {
     window.URL = window.URL || window.webkitURL;
     let a = document.createElement("a")
     a.href = window.URL.createObjectURL(file)
-    a.download = "Test Save.txt"
+    a.download = "TBU Save.txt"
     a.click()
 }
 

@@ -15,61 +15,83 @@
 </head>
 <body onload="loadGame()">
     <div id='app'>
-        <div v-if='player.balancedStart || player.SBPoints.lte(0)'>
-            You have <h2>{{ format(player.points, 1) }}</h2> points<br>
-            (+{{ format(FUNS.getPointsGain(), 1) }}/s)<br><br>
-            {{ format(FUNS.getSpentNumbers(), 1) }}/{{ format(FUNS.getMaxNumbers(), 1) }} Numbers used.<br><br>
-            <div class='table_center'>
-                <div v-for='x in FUNS.getSlot()' class='upgrade'>
-                    <div style='height: 30px; display: flex; justify-content: space-between; align-items: center;' v-if='!player.start'>
-                        <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.addUpgrade(x, -1)">◄</div>
-                        <div style='font-size: 20px;'>{{ player.upgradeSlot[UPGRADES.getUpgrade(x)] }}</div>
-                        <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.addUpgrade(x, 1)">►</div>
-                    </div><div style='height: 150px'>
-                        Picked Number: <b>{{ format(FUNS.getNumber(x), 1) }}</b><br>
-                        {{ UPGRADES.types[player.upgradeSlot[UPGRADES.getUpgrade(x)]].desc(x) }}
-                    </div><div style='height: 30px' v-if='!player.start'>
-                        <input placeholder="Input Number" class='input_upgrade' v-model='player.pickedNumbers[x]'>
-                    </div><div class="set_button" v-on:click='FUNS.setNumber(x)' v-if='!player.start'>Set</div>
+        <div class="table_center main" style="height: calc(100% - 30px)">
+            <div style="width: 250px">
+                <div v-for="x in TABS.length">
+                    <button class="tab_button" v-on:click="TABS.choose(x, TABS.unl()[x])">{{ msg(TABS.title[x], TABS.unl()[x]) }}</button>
                 </div>
-            </div><br>
-            <button class="button_start" onclick='FUNS.startGain()'>{{ FUNS.startMsg() }}</button><br><br>
-            <div v-if='player.start'>Need to reach {{ format(player.points, 1) }}/{{ format(FUNS.getFinishPoints(), 1) }} points to get balanced points!</div><br>
-            <div v-if='player.balancedPoints.gte(1)'>
-                You have <h2>{{ format(player.balancedPoints, 0) }}</h2> balanced points<br>
-                You have {{ format(UPGRADES.balanced.getUnspentBP(), 0) }} unspent balanced points<br><br>
-                <div class='table_center'>
-                    <div v-for='x in UPGRADES.balanced.cols' class="upgrade balanced" v-on:click="UPGRADES.balanced.buy(x)" v-bind:class="{closed: !UPGRADES.balanced.canBuy(x), can: UPGRADES.balanced.canBuy(x), bought: player.balancedUpgs.includes(x)}">
-                        <div style='height: 100px;'>
-                            <b>{{ UPGRADES.balanced[x].title }}</b><br>
-                            {{ UPGRADES.balanced[x].desc }}
-                        </div>Cost: {{ format(UPGRADES.balanced[x].cost(), 0) }} BP
+            </div><div style="width: calc(100% - 260px); background-color: #999; margin-left: 10px; height: 100%;">
+                <div>
+                    <div style="height: 50px">
+                        You have <h2>{{ format(player.points, 1) }}</h2> (+{{ format(FUNS.getPointsGain(), 1) }}/s) points
+                    </div><div style="height: 120px">
+                        <div class="bar" onclick='FUNS.startGain()'>
+                            <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.points, FUNS.getFinishPoints(), true)}"></div>
+                            <div style="position: relative; bottom: 35px;">{{ FUNS.startMsg() }}<span v-if="player.start"> ({{ format(player.points, 1) }}/{{ format(FUNS.getFinishPoints(), 1) }} points to get balanced point)</span></div>
+                        </div>
+                        <div class="bar" v-if="player.SBPoints.lte(0)?FUNS.superBalanced.canFinish():true" onclick='FUNS.superBalanced.start()'>
+                            <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.balancedPoints, FUNS.superBalanced.req())}"></div>
+                            <div style="position: relative; bottom: 35px;">{{ FUNS.superBalanced.msg() }}<span v-if="player.balancedStart"> ({{ format(player.balancedPoints, 0) }}/{{ format(FUNS.superBalanced.req(), 0) }} balanced points to get super balanced point)</span></div>
+                        </div>
                     </div>
                 </div>
-            </div><br>
-        </div>
-        <button class="button_start" v-if="player.SBPoints.lte(0)?FUNS.superBalanced.canFinish():true" onclick="FUNS.superBalanced.start()">{{ FUNS.superBalanced.msg() }}</button><br><br>
-        <div v-if="player.balancedStart">Need to reach {{ format(player.balancedPoints, 0) }}/{{ format(FUNS.superBalanced.req(), 0) }} balanced points to get super balanced points!</div><br>
-        <div v-if="player.SBPoints.gte(1)">
-            You have <h2>{{ format(player.SBPoints, 0) }}</h2> super balanced points<br>
-            Have {{ format(UPGRADES.superBalanced.getUnspent(), 0) }} unspent super balanced points<br><br>
-            <div class="table_center">
-                <div v-for='x in 2' style="width: 30%; margin: 5px; padding: 5px; border: solid 2px black;">
-                    <div v-if='!player.balancedStart'>
-                        <div style='height: 30px; display: flex; justify-content: space-between; align-items: center;'>
-                            <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.superBalanced.addType(x, -1)">-</div>
-                            <div style='font-size: 15px;'>Have <h2>{{ format(player.SBTypes[x], 0) }}</h2> {{ UPGRADES.superBalanced[x].title }} points</div>
-                            <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.superBalanced.addType(x, 1)">+</div>
-                        </div><br>
+                <br>
+
+                <div v-if="player.tab == 1"><div v-if="!player.balancedStart && player.SBPoints.gte(1)">Need start to make balanced points first!</div>
+                    <div v-if="player.balancedStart || player.SBPoints.lte(0)">
+                        {{ format(FUNS.getSpentNumbers(), 1) }}/{{ format(FUNS.getMaxNumbers(), 1) }} Numbers used.<br><br>
+                        <div class='table_center'>
+                            <div v-for='x in FUNS.getSlot()' class='upgrade'>
+                                <div style='height: 30px; display: flex; justify-content: space-between; align-items: center; background-color: #bbb' v-if='!player.start'>
+                                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.addUpgrade(x, -1)">◄</div>
+                                    <div style='font-size: 20px;'>{{ player.upgradeSlot[UPGRADES.getUpgrade(x)] }}</div>
+                                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.addUpgrade(x, 1)">►</div>
+                                </div><div style='height: 150px; background-color: #aaa'>
+                                    Picked Number: <b>{{ format(FUNS.getNumber(x), 1) }}</b><br>
+                                    {{ UPGRADES.types[player.upgradeSlot[UPGRADES.getUpgrade(x)]].desc(x) }}
+                                </div><div style='height: 30px' v-if='!player.start'>
+                                    <input placeholder="Input Number" class='input_upgrade' v-model='player.pickedNumbers[x]'>
+                                </div><div class="set_button" v-on:click='FUNS.setNumber(x)' v-if='!player.start'>Set</div>
+                            </div>
+                        </div>
                     </div>
-                    <div v-for='y in player.SBPoints.min(UPGRADES.superBalanced.cols).toNumber()' v-if='UPGRADES.superBalanced[x][y]' style="text-align: left;"
-                    v-bind:style="{color: UPGRADES.superBalanced.unlocked(x, y)?'black':'lightgray'}">
-                        • {{ y }} - {{ UPGRADES.superBalanced[x][y].desc() }}
+                </div><div v-if="player.tab == 2"><div v-if="!player.balancedStart && player.SBPoints.gte(1)">Need start to make balanced points first!</div>
+                    <div v-if="player.balancedStart || player.SBPoints.lte(0)">
+                        You have <h2>{{ format(player.balancedPoints, 0) }}</h2> balanced points<br>
+                        You have {{ format(UPGRADES.balanced.getUnspentBP(), 0) }} unspent balanced points<br><br>
+                        <div class='table_center'>
+                            <div v-for='x in UPGRADES.balanced.cols' v-if="UPGRADES.balanced[x].unl?UPGRADES.balanced[x].unl():true" class="upgrade balanced" v-on:click="UPGRADES.balanced.buy(x)" v-bind:class="{closed: !UPGRADES.balanced.canBuy(x), can: UPGRADES.balanced.canBuy(x), bought: player.balancedUpgs.includes(x)}">
+                                <div style='height: 100px;'>
+                                    <b>{{ UPGRADES.balanced[x].title }}</b><br>
+                                    {{ UPGRADES.balanced[x].desc() }}
+                                </div>Cost: {{ format(UPGRADES.balanced[x].cost(), 0) }} BP
+                            </div>
+                        </div>
                     </div>
+                </div><div v-if="player.tab == 3">
+                    You have <h2>{{ format(player.SBPoints, 0) }}</h2> super balanced points<br>
+                    Have {{ format(UPGRADES.superBalanced.getUnspent(), 0) }} unspent super balanced points<br><br>
+                    <div class="table_center">
+                        <div v-for='x in 2' style="width: 45%; margin: 5px; padding: 5px; border: solid 2px black;">
+                            <div v-if='!player.balancedStart'>
+                                <div style='height: 30px; display: flex; justify-content: space-between; align-items: center;'>
+                                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.superBalanced.addType(x, -1)">-</div>
+                                    <div style='font-size: 15px;'>Have <h2>{{ format(player.SBTypes[x], 0) }}</h2> {{ UPGRADES.superBalanced[x].title }} points</div>
+                                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.superBalanced.addType(x, 1)">+</div>
+                                </div><br>
+                            </div>
+                            <div v-for='y in player.SBPoints.min(UPGRADES.superBalanced.cols).toNumber()' v-if='UPGRADES.superBalanced[x][y]' style="text-align: left;"
+                                v-bind:style="{color: UPGRADES.superBalanced.unlocked(x, y)?'black':'#555'}">
+                                • {{ y }} - {{ UPGRADES.superBalanced[x][y].desc() }}
+                            </div>
+                        </div>
+                    </div>
+                </div><div v-if="player.tab == 4">
+                    :3
                 </div>
             </div>
         </div>
-
+        Save | Export | Import | Hard Reset | Credits
         <div style='display: none'>{{ player.time }}</div>
     </div>
 </body>
