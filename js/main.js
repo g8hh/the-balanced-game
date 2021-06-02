@@ -39,7 +39,7 @@ const FUNS = {
         return mult
     },
     startGain() {
-        if (!player.balancedStart) return
+        if (!player.balancedStart && player.SBPoints.gte(1)) return
         if (player.start && this.canFinish()) {
             player.balancedPoints = player.balancedPoints.add(1)
         }
