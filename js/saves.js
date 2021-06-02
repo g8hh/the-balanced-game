@@ -56,7 +56,10 @@ function updateUpgradeSlot() {
 }
 
 function checkIfUndefined() {
-    for (let key in Object.keys(PLAYER_DATA)) if (player[key] === undefined) player[key] = PLAYER_DATA[key]
+    let keys = Object.keys(PLAYER_DATA)
+    for (let key in keys) {
+        if (player[keys[key]] === undefined) player[keys[key]] = PLAYER_DATA[keys[key]]
+    }
 }
 
 function convertToExpNum() {

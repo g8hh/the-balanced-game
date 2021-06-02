@@ -43,11 +43,11 @@ const FUNS = {
         if (player.start && this.canFinish()) {
             player.balancedPoints = player.balancedPoints.add(1)
         }
-        player.points = E(0)
+        if (player.achs.includes(6)?(player.start && !this.canFinish()):true) player.points = E(0)
         updateUpgradeSlot()
         player.start = !player.start
     },
-    getMaxNumbers() { return E(10).add(UPGRADES.superBalanced.unlocked(1,1)?5:0).add(UPGRADES.superBalanced.unlocked(1,4)?5:0) },
+    getMaxNumbers() { return E(10).add(UPGRADES.superBalanced.unlocked(1,1)?5:0).add(UPGRADES.superBalanced.unlocked(1,4)?5:0).add(UPGRADES.superBalanced.unlocked(1,6)?1:0).add(UPGRADES.superBalanced.unlocked(1,7)?5:0) },
     getSpentNumbers() {
         let num = E(0)
         for (let x = 1; x <= this.getSlot(); x++) num = num.add(this.getNumber(x))
@@ -57,10 +57,10 @@ const FUNS = {
         let per = log10 ? num.max(1).log10().div(max.max(1).log10()).max(0).min(1) : num.max(0).div(max.max(1)).max(0).min(1)
         return format(per.mul(100))+'%'
     },
-    getFinishPoints(x=player.balancedPoints) { return E(8).pow(x).mul(15000).mul(E(3).pow(x.gte(6)?x.sub(5).pow(1.05):0)).div(player.balancedUpgs.includes(5)?UPGRADES.balanced[5].effect():1).max(1) },
+    getFinishPoints(x=player.balancedPoints) { return E(8).pow(x).mul(15000).mul(E(3).pow(x.gte(6)?x.sub(5).pow(1.05):0)).mul(E(8).pow(x.gte(140)?x.sub(139).pow(1.15):0)).div(player.balancedUpgs.includes(5)?UPGRADES.balanced[5].effect():1).root(player.balancedUpgs.includes(6)?UPGRADES.balanced[6].effect():1).max(1) },
     canFinish() { return player.points.gte(this.getFinishPoints()) },
     startMsg() { return player.start?(this.canFinish()?"Complete to get 1 balanced point":"Cancel to gain points"):"Start to gain points, but you can't pick numbers & upgrades!" },
-    getSlot() { return 3 + (player.balancedUpgs.includes(2)?1:0) + (UPGRADES.superBalanced.unlocked(1,3)?1:0) },
+    getSlot() { return 3 + (player.balancedUpgs.includes(2)?1:0) + (UPGRADES.superBalanced.unlocked(1,3)?1:0) + (UPGRADES.superBalanced.unlocked(1,6)?1:0) },
     superBalanced: {
         msg() { return (player.balancedStart || player.SBPoints.lte(0))?(this.canFinish()?"Complete to get 1 super balanced point":"Cancel to make balanced points"):"Start to make balanced points" },
         canFinish() { return player.balancedPoints.gte(this.req()) },

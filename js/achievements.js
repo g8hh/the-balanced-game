@@ -6,7 +6,7 @@ const ACHS = {
             $.notify(this[x].title, "success")
         }
     },
-    length: 5,
+    length: 6,
     1: {
         title: "First Balanced!",
         desc: "Get first balanced point.",
@@ -29,7 +29,12 @@ const ACHS = {
     },
     5: {
         title: "Really bug?!",
-        desc: "Get 4 super balanced points. Reward: Unlock Auto-Balance",
+        desc: "Get 4 super balanced points. Reward: Unlock Auto-Balance.",
         can() { return player.SBPoints.gte(4) },
+    },
+    6: {
+        title: "TEN TAN TIN",
+        desc: "Get 10 super balanced points. Reward: Balanced points resets nothing, if you can finish to get balanced points.",
+        can() { return player.SBPoints.gte(10) },
     },
 }
