@@ -10,6 +10,8 @@ function ex(x){
 function calc(dt) {
     player.time += dt
     if (player.start) player.points = player.points.add(FUNS.getPointsGain().mul(dt))
+    for (let x = 1; x <= ACHS.length; x++) ACHS.unlock(x)
+    if (player.auto_bal && player.achs.includes(5)) FUNS.startGain(true)
 }
 
 const PLAYER_DATA = {
@@ -26,6 +28,8 @@ const PLAYER_DATA = {
     balancedStart: false,
     upgradeSlot: {},
     SBTypes: {1: E(0), 2: E(0)},
+    achs: [],
+    auto_bal: false,
 }
 
 function wipe() {
@@ -52,16 +56,7 @@ function updateUpgradeSlot() {
 }
 
 function checkIfUndefined() {
-    if (player.time === undefined) player.time = PLAYER_DATA.time
-    if (player.points === undefined) player.points = PLAYER_DATA.points
-    if (player.pickedUpgs === undefined) player.pickedUpgs = PLAYER_DATA.pickedUpgs
-    if (player.numbers === undefined) player.numbers = PLAYER_DATA.numbers
-    if (player.start === undefined) player.start = PLAYER_DATA.start
-    if (player.balancedPoints === undefined) player.balancedPoints = PLAYER_DATA.balancedPoints
-    if (player.balancedUpgs === undefined) player.balancedUpgs = PLAYER_DATA.balancedUpgs
-    if (player.SBPoints === undefined) player.SBPoints = PLAYER_DATA.SBPoints
-    if (player.balancedStart === undefined) player.balancedStart = PLAYER_DATA.balancedStart
-    if (player.SBTypes === undefined) player.SBTypes = PLAYER_DATA.SBTypes
+    for (let key in Object.keys(PLAYER_DATA)) if (player[key] === undefined) player[key] = PLAYER_DATA[key]
 }
 
 function convertToExpNum() {
@@ -99,6 +94,7 @@ function importy() {
     let loadgame = prompt("Paste in your save WARNING: WILL OVERWRITE YOUR CURRENT SAVE")
     if (loadgame != null) {
         load(loadgame)
+        location.reload()
     }
 }
 
@@ -107,4 +103,6 @@ function loadGame() {
     load(localStorage.getItem("testSave"))
     loadVue()
     setInterval(save,1000)
+    document.getElementById('loading').style.display = 'none'
+    document.getElementById('app').style.display = 'block'
 }

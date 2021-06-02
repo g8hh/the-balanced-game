@@ -5,30 +5,36 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/notify.js"></script>
     <script src="js/ExpantaNum.js"></script>
     <script src="js/saves.js"></script>
     <script src="js/main.js"></script>
     <script src="js/upgrades.js"></script>
+    <script src="js/achievements.js"></script>
     <script src="js/v.js"></script>
 
     <title>The Balanced Upgrade</title>
 </head>
 <body onload="loadGame()">
-    <div id='app'>
+    <div id='loading' style='font-size: 70px; position: relative; top: 40%'>
+        Loading Game...
+    </div>
+    <div id='app' style='display: none'>
         <div class="table_center main" style="height: calc(100% - 30px)">
             <div style="width: 250px">
                 <div v-for="x in TABS.length">
                     <button class="tab_button" v-on:click="TABS.choose(x, TABS.unl()[x])">{{ msg(TABS.title[x], TABS.unl()[x]) }}</button>
                 </div>
-            </div><div style="width: calc(100% - 260px); background-color: #999; margin-left: 10px; height: 100%;">
+            </div><div style="width: calc(100% - 260px); background-color: #999; margin-left: 10px; height: 100%; overflow-y: auto;">
                 <div>
                     <div style="height: 50px">
                         You have <h2>{{ format(player.points, 1) }}</h2> (+{{ format(FUNS.getPointsGain(), 1) }}/s) points
-                    </div><div style="height: 120px">
+                    </div><div style="height: 130px">
                         <div class="bar" onclick='FUNS.startGain()'>
                             <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.points, FUNS.getFinishPoints(), true)}" v-bind:class="{finish: FUNS.canFinish()}"></div>
                             <div style="position: relative; bottom: 35px;">{{ FUNS.startMsg() }}<span v-if="player.start"> ({{ format(player.points, 1) }}/{{ format(FUNS.getFinishPoints(), 1) }} points to get balanced point)</span></div>
-                        </div>
+                        </div><div v-bind:style="{visibility: player.achs.includes(5)?'visible':'hidden'}">Auto-Balance: <input type="checkbox" v-model="player.auto_bal"></div>
                         <div class="bar" v-if="player.SBPoints.lte(0)?FUNS.superBalanced.canFinish():true" onclick='FUNS.superBalanced.start()'>
                             <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.balancedPoints, FUNS.superBalanced.req())}" v-bind:class="{finish: FUNS.superBalanced.canFinish()}"></div>
                             <div style="position: relative; bottom: 35px;">{{ FUNS.superBalanced.msg() }}<span v-if="player.balancedStart"> ({{ format(player.balancedPoints, 0) }}/{{ format(FUNS.superBalanced.req(), 0) }} balanced points to get super balanced point)</span></div>
@@ -87,11 +93,14 @@
                         </div>
                     </div>
                 </div><div v-if="player.tab == 4">
-                    :3
+                    <div v-for="x in ACHS.length" style='width: calc(100%-20px); height: 150px; border-radius: 20px; margin: 10px;' v-bind:style="{'background-color': player.achs.includes(x)?'limegreen':'#bbb'}">
+                        <h2>{{ ACHS[x].title }}</h2><br>
+                        <br>{{ ACHS[x].desc }}
+                    </div>
                 </div>
             </div>
         </div>
-        Save | Export | Import | Hard Reset | Credits
+        <span style="cursor: pointer" onclick="save()">Save</span> | <span style="cursor: pointer" onclick="exporty()">Export</span> | <span style="cursor: pointer" onclick="importy()">Import</span> | <span style="cursor: pointer" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</span> | Credits
         <div style='display: none'>{{ player.time }}</div>
     </div>
 </body>

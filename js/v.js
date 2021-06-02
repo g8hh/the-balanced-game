@@ -8,6 +8,7 @@ function loadVue() {
 			FUNS,
 			UPGRADES,
 			TABS,
+			ACHS,
 			format,
 			msg,
         }

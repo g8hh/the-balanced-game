@@ -38,8 +38,8 @@ const FUNS = {
         }
         return mult
     },
-    startGain() {
-        if (!player.balancedStart && player.SBPoints.gte(1)) return
+    startGain(auto = false) {
+        if ((!player.balancedStart && player.SBPoints.gte(1)) || (auto && !this.canFinish())) return
         if (player.start && this.canFinish()) {
             player.balancedPoints = player.balancedPoints.add(1)
         }
@@ -69,7 +69,7 @@ const FUNS = {
             let finish = false
             if ((player.SBPoints.lte(0) ? true : player.balancedStart) && this.canFinish()) finish = true
             if (player.balancedStart && !finish) if (!confirm("Are you really cancel to gain balanced points?")) return
-            player.tab = player.balancedStart ? 3 : 1
+            player.tab = (player.balancedStart || player.SBPoints.lte(0)) ? 3 : 1
 
             player.points = E(0)
             player.balancedPoints = E(0)
