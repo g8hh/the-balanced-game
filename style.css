@@ -130,8 +130,11 @@ button.button_start {
 .progress_bar {
 	height: 100%;
 	border-radius: 15px;
-	background-color: lime;
+	background-color: #bbb;
 	transition-duration: 0.25s;
+}
+.progress_bar.finish {
+	background-color: lime;
 }
 
 [tooltip] {

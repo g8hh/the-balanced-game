@@ -26,11 +26,11 @@
                         You have <h2>{{ format(player.points, 1) }}</h2> (+{{ format(FUNS.getPointsGain(), 1) }}/s) points
                     </div><div style="height: 120px">
                         <div class="bar" onclick='FUNS.startGain()'>
-                            <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.points, FUNS.getFinishPoints(), true)}"></div>
+                            <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.points, FUNS.getFinishPoints(), true)}" v-bind:class="{finish: FUNS.canFinish()}"></div>
                             <div style="position: relative; bottom: 35px;">{{ FUNS.startMsg() }}<span v-if="player.start"> ({{ format(player.points, 1) }}/{{ format(FUNS.getFinishPoints(), 1) }} points to get balanced point)</span></div>
                         </div>
                         <div class="bar" v-if="player.SBPoints.lte(0)?FUNS.superBalanced.canFinish():true" onclick='FUNS.superBalanced.start()'>
-                            <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.balancedPoints, FUNS.superBalanced.req())}"></div>
+                            <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.balancedPoints, FUNS.superBalanced.req())}" v-bind:class="{finish: FUNS.superBalanced.canFinish()}"></div>
                             <div style="position: relative; bottom: 35px;">{{ FUNS.superBalanced.msg() }}<span v-if="player.balancedStart"> ({{ format(player.balancedPoints, 0) }}/{{ format(FUNS.superBalanced.req(), 0) }} balanced points to get super balanced point)</span></div>
                         </div>
                     </div>
