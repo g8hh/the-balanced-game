@@ -22,6 +22,7 @@ const UPGRADES = {
         }
         if (UPGRADES.superBalanced.unlocked(1,2)) num = num.mul(1.15)
         if (UPGRADES.superBalanced.unlocked(1,5)) num = num.mul(UPGRADES.superBalanced[1][5].effect())
+        if (UPGRADES.superBalanced.unlocked(1,8)) num = num.mul(UPGRADES.superBalanced[1][8].effect())
         return num
     }, 
     types: {
@@ -40,6 +41,7 @@ const UPGRADES = {
             desc(x, eff = this.effect(x)) { return `Multiply points gain by ${format(eff, 1)}x` },
             effect(x, num = UPGRADES.getNumbers(FUNS.getNumber(x))) {
                 let eff = num.pow(1.5)
+                if (UPGRADES.superBalanced.unlocked(2,8)) eff = eff.pow(UPGRADES.superBalanced[2][8].effect())
                 if (x-1 > 0 && UPGRADES.superBalanced.unlocked(2,1)) if (player.upgradeSlot[UPGRADES.getUpgrade(x-1)] == 4) eff = eff.pow(UPGRADES.types[4].effect(x-1))
                 return eff
             },
@@ -49,6 +51,7 @@ const UPGRADES = {
             desc(x, eff = this.effect(x)) { return `Multiply points gain based on your points. (${format(eff, 1)}x)` },
             effect(x, num = UPGRADES.getNumbers(FUNS.getNumber(x), 2)) {
                 let eff = player.points.add(1).log10().add(1).pow(1.25).mul(player.balancedUpgs.includes(1)?num:1).pow(player.balancedUpgs.includes(4)?1.5:1)
+                if (UPGRADES.superBalanced.unlocked(2,8)) eff = eff.pow(UPGRADES.superBalanced[2][8].effect())
                 if (x-1 > 0 && UPGRADES.superBalanced.unlocked(2,1)) if (player.upgradeSlot[UPGRADES.getUpgrade(x-1)] == 4) eff = eff.pow(UPGRADES.types[4].effect(x-1))
                 if (UPGRADES.superBalanced.unlocked(2,4)) eff = eff.pow(2)
                 return eff
@@ -60,6 +63,7 @@ const UPGRADES = {
             effect(x, num = UPGRADES.getNumbers(FUNS.getNumber(x))) {
                 let base = E(1.5).add(player.balancedPoints.mul(0.25))
                 if (UPGRADES.superBalanced.unlocked(2,3)) base = base.mul(UPGRADES.superBalanced[2][3].effect())
+                if (UPGRADES.superBalanced.unlocked(2,8)) base = base.mul(UPGRADES.superBalanced[2][8].effect())
                 let eff = base.pow(num)
                 if (x-1 > 0 && UPGRADES.superBalanced.unlocked(2,1)) if (player.upgradeSlot[UPGRADES.getUpgrade(x-1)] == 4) eff = eff.pow(UPGRADES.types[4].effect(x-1))
                 return eff
@@ -71,6 +75,7 @@ const UPGRADES = {
             effect(x, num = UPGRADES.getNumbers(FUNS.getNumber(x))) {
                 let eff = num.pow(0.5)
                 if (UPGRADES.superBalanced.unlocked(2,5)) eff = eff.mul(1.15)
+                if (UPGRADES.superBalanced.unlocked(2,8)) eff = eff.mul(UPGRADES.superBalanced[2][8].effect())
                 return eff
             },
         },
@@ -126,7 +131,11 @@ const UPGRADES = {
             title: "Weak Requirement",
             desc(eff=this.effect()) { return `Root balanced points requirement based on your balanced points (${format(eff)}√)` },
             cost() { return E(36) },
-            effect() { return player.balancedPoints.div(1333).add(1) },
+            effect() {
+                let eff = player.balancedPoints.div(1333).add(1)
+                if (UPGRADES.superBalanced.unlocked(2,9)) eff = eff.mul(1.1)
+                return eff
+            },
         },
     },
     superBalanced: {
@@ -135,7 +144,7 @@ const UPGRADES = {
         addType(x, n) {
             if (this.getUnspent().gte(1) || n < 0) player.SBTypes[x] = player.SBTypes[x].add(n).floor().max(0)
         },
-        cols: 7,
+        cols: 9,
         1: {
             title: "Numberize",
             1: {
@@ -162,6 +171,16 @@ const UPGRADES = {
             },
             7: {
                 desc() { return `Maximum numbers is increased by 5` },
+            },
+            8: {
+                desc(eff=this.effect()) { return `Makes numbers are ${format(eff.sub(1).mul(100), 3)}% stronger (based on your super balanced points)` },
+                effect(x=player.SBPoints) {
+                    let eff = x.pow(0.6).div(100).add(1)
+                    return eff
+                },
+            },
+            9: {
+                desc() { return `Adds +1 max numbers` },
             },
         },
         2: {
@@ -190,6 +209,16 @@ const UPGRADES = {
             },
             7: {
                 desc() { return `Balanced upgrade "Less Requirement" are squared` },
+            },
+            8: {
+                desc(eff=this.effect()) { return `Makes upgrades ${format(eff.sub(1).mul(100), 3)}% stronger (based on your balanced points)` },
+                effect(x=player.balancedPoints) {
+                    let eff = x.add(1).pow(0.015)
+                    return eff
+                },
+            },
+            9: {
+                desc() { return `Balanced upgrade "Weak Requirement" are 10% stronger` },
             },
         },
     },

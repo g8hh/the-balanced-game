@@ -24,6 +24,21 @@ const TABS = {
 }
 
 const FUNS = {
+    popup: {
+        add(title, desc, button='Ok') {
+            player.popups.push({
+                title: title,
+                desc: desc,
+                button: button,
+            })
+            updatePopup()
+        },
+        display() { return player.popups[player.popups.length-1] },
+        remove() {
+            player.popups.pop()
+            updatePopup()
+        },
+    },
     getPickedNumber(x) { return (player.pickedNumbers[x] != '' && player.pickedNumbers[x] !== undefined && !E(player.pickedNumbers[x]).isNaN())?E(player.pickedNumbers[x]):E(1) },
     setNumber(x) {
         player.numbers[x] = this.getPickedNumber(x).max(1).min(this.getMaxNumbers())
@@ -43,11 +58,11 @@ const FUNS = {
         if (player.start && this.canFinish()) {
             player.balancedPoints = player.balancedPoints.add(1)
         }
-        if (player.achs.includes(6)?(player.start && !this.canFinish()):true) player.points = E(0)
+        if (player.achs.includes(6)?(player.start && !this.canFinish() && !auto):true) player.points = E(0)
         updateUpgradeSlot()
-        player.start = !player.start
+        if (player.achs.includes(6)?(!auto):true) player.start = !player.start
     },
-    getMaxNumbers() { return E(10).add(UPGRADES.superBalanced.unlocked(1,1)?5:0).add(UPGRADES.superBalanced.unlocked(1,4)?5:0).add(UPGRADES.superBalanced.unlocked(1,6)?1:0).add(UPGRADES.superBalanced.unlocked(1,7)?5:0) },
+    getMaxNumbers() { return E(10).add(UPGRADES.superBalanced.unlocked(1,1)?5:0).add(UPGRADES.superBalanced.unlocked(1,4)?5:0).add(UPGRADES.superBalanced.unlocked(1,6)?1:0).add(UPGRADES.superBalanced.unlocked(1,7)?5:0).add(UPGRADES.superBalanced.unlocked(1,9)?1:0) },
     getSpentNumbers() {
         let num = E(0)
         for (let x = 1; x <= this.getSlot(); x++) num = num.add(this.getNumber(x))
@@ -109,6 +124,16 @@ function format(ex, acc=3) {
         let m = ex.div(E(10).pow(e))
         return (e.log10().gte(9)?'':m.toFixed(3))+'e'+format(e,0)
     }
+}
+
+function formatTime(x, acc=2) {
+    let time = Math.max(x,0)
+    let sec = time - 60 * Math.floor(time / 60)
+    let min = Math.floor(time/60) - 60 * Math.floor(time / 3600)
+    let hour = Math.floor(time/3600)
+    if (hour > 0) return hour + ":" + (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec.toFixed(0) : sec.toFixed(0))
+    if (min > 0) return min + ":" + (sec < 10 ? "0" + sec.toFixed(acc) : sec.toFixed(acc))
+    return sec.toFixed(acc)
 }
 
 setInterval(loop, 50)

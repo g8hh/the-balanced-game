@@ -8,13 +8,40 @@ function ex(x){
 }
 
 function calc(dt) {
+    if (player.time == 0) FUNS.popup.add(`Hello!`, `Welcome to "the Balanced Upgrade!"<br>You are started to pick any numbers and upgrades, then start to gain points!<br>Good luck :)`, `Thanks, lets play!`)
     player.time += dt
     if (player.start) player.points = player.points.add(FUNS.getPointsGain().mul(dt))
     for (let x = 1; x <= ACHS.length; x++) ACHS.unlock(x)
     if (player.auto_bal && player.achs.includes(5)) FUNS.startGain(true)
+    document.getElementById('popup').style.visibility = (player.popups.length == 0)?'hidden':'visible'
+}
+
+window.addEventListener('resize', e=>{
+    updateDisplay()
+})
+
+function updateDisplay() {
+    updatePopup()
+}
+
+function updatePopup() {
+    popup = document.getElementById('msg_popup').style;
+    var w = window.innerWidth, h = window.innerHeight;
+    var psize = [550, 400]
+    popup.width = psize[0]
+    popup.height = psize[1]
+    popup.left = (w-psize[0])/2
+    popup.top = (h-psize[1])/2
+
+    var dis = FUNS.popup.display()
+    if (!dis) return
+    document.getElementById('popup_title').innerHTML = dis.title
+    document.getElementById('popup_desc').innerHTML = dis.desc
+    document.getElementById('popup_button').innerHTML = dis.button
 }
 
 const PLAYER_DATA = {
+    popups: [],
     time: 0,
     tab: 1,
     points: E(0),
@@ -34,6 +61,7 @@ const PLAYER_DATA = {
 
 function wipe() {
     player = PLAYER_DATA
+    updateUpgradeSlot()
 }
 
 function loadPlayer(load) {
@@ -71,12 +99,12 @@ function convertToExpNum() {
 }
 
 function save(){
-    if (localStorage.getItem("testSave") == '') wipe()
-    localStorage.setItem("testSave",btoa(JSON.stringify(player)))
+    if (localStorage.getItem("TBU_Save") == '') wipe()
+    localStorage.setItem("TBU_Save",btoa(JSON.stringify(player)))
 }
 
 function load(x){
-    if(typeof x == "string" & x != ''){
+    if(typeof x == "string" && x != '' && x != null){
         loadPlayer(JSON.parse(atob(x)))
     } else {
         wipe()
@@ -103,8 +131,9 @@ function importy() {
 
 function loadGame() {
     wipe()
-    load(localStorage.getItem("testSave"))
+    load(localStorage.getItem("TBU_Save"))
     loadVue()
+    updateDisplay()
     setInterval(save,1000)
     document.getElementById('loading').style.display = 'none'
     document.getElementById('app').style.display = 'block'

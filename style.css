@@ -137,11 +137,36 @@ button.button_start {
 	background-color: lime;
 }
 
+#popup {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.75)
+}
+
+#msg_popup {
+    text-align: center;
+    position: relative;
+    background-color: #999;
+    border: 3px solid black;
+    border-radius: 30px;
+    top: 0px;
+    left: 0px;
+}
+
+#popup_button {
+	width: 200px;
+    height: 60px;
+	border-radius: 30px;
+}
+
 [tooltip] {
 		position: relative;
 		z-index: 2;
 		white-space: pre-wrap;
-	}
+}
 
 [tooltip]:before,
 [tooltip]:after {

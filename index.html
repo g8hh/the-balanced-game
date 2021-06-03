@@ -43,7 +43,21 @@
                 </div>
                 <br>
                 <div v-if="player.tab == 0">
-                    
+                    Game made by MrRedShark77 in Mini-GameJam<br>
+                    Thanks for Ideas: Marc & Unpingabot!<br><br>
+                    <h1>Story of Creating the Game</h1><br><br>
+                    <h2>Day 1</h2><br>
+                    - Presented upgrades & balanced points<br><br>
+                    <h2>Day 2</h2><br>
+                    - Presented balanced upgrades<br><br>
+                    <h2>Day 3</h2><br>
+                    - Presented SUPER balanced points & types<br><br>
+                    <h2>Day 4</h2><br>
+                    - Presented Style & Tabs, more upgrades<br><br>
+                    <h2>Day 5</h2><br>
+                    - Achievements, fixed bugs, and more...<br><br>
+                    <h2>Day 6-7</h2><br>
+                    - Final features, ending & credits! The game is READY!
                 </div>
                 <div v-if="player.tab == 1"><div v-if="!player.balancedStart && player.SBPoints.gte(1)">Need start to make balanced points first!</div>
                     <div v-if="player.balancedStart || player.SBPoints.lte(0)">
@@ -103,6 +117,15 @@
             </div>
         </div>
         <span style="cursor: pointer" onclick="save()">Save</span> | <span style="cursor: pointer" onclick="exporty()">Export</span> | <span style="cursor: pointer" onclick="importy()">Import</span> | <span style="cursor: pointer" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</span> | <span style="cursor: pointer" onclick="player.tab = 0">Credits</span>
+        <div id='popup' style='visibility: hidden'>
+            <div id="msg_popup">
+                <h2 id='popup_title' style='font-weight: bold'></h2><br><br>
+                <div id='popup_desc' style='height: 260px;'>
+
+                </div><br>
+                <button onclick="FUNS.popup.remove()" id='popup_button'></button>
+            </div>
+        </div>
         <div style='display: none'>{{ player.time }}</div>
     </div>
 </body>
