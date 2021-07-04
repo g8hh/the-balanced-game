@@ -1,0 +1,143 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/notify.js"></script>
+    <script src="js/ExpantaNum.js"></script>
+    <script src="js/saves.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/upgrades.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/v.js"></script>
+
+    <title>平衡升级 - The Balanced Upgrade</title>
+</head>
+<body onload="loadGame()">
+<script src="chs.js?202106041511"></script>
+<script src="//g8hh.com/zh/core.js"></script>
+    <div id='loading' style='font-size: 70px; position: relative; top: 40%'>
+        Loading Game...
+    </div>
+    <div id='app' style='display: none'>
+        <div class="table_center main" style="height: calc(100% - 30px)">
+            <div style="width: 250px">
+                <div v-for="x in TABS.length">
+                    <button class="tab_button" v-on:click="TABS.choose(x, TABS.unl()[x])">{{ msg(TABS.title[x], TABS.unl()[x]) }}</button>
+                </div>
+            </div><div style="width: calc(100% - 260px); background-color: #999; margin-left: 10px; height: 100%; overflow-y: auto;">
+                <div>
+                    <div style="height: 50px">
+                        You have <h2>{{ format(player.points, 1) }}</h2> (+{{ format(FUNS.getPointsGain(), 1) }}/s) points
+                    </div><div style="height: 130px">
+                        <div class="bar" onclick='FUNS.startGain()'>
+                            <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.points, FUNS.getFinishPoints(), true)}" v-bind:class="{finish: FUNS.canFinish()}"></div>
+                            <div style="position: relative; bottom: 35px;">{{ FUNS.startMsg() }}<span v-if="player.start"> ({{ format(player.points, 1) }}/{{ format(FUNS.getFinishPoints(), 1) }} points to get balanced point)</span></div>
+                        </div><div v-bind:style="{visibility: player.achs.includes(5)?'visible':'hidden'}">Auto-Balance: <input type="checkbox" v-model="player.auto_bal"></div>
+                        <div class="bar" v-if="player.SBPoints.lte(0)?FUNS.superBalanced.canFinish():true" onclick='FUNS.superBalanced.start()'>
+                            <div class="progress_bar" v-bind:style="{width: FUNS.getPercent(player.balancedPoints, FUNS.superBalanced.req())}" v-bind:class="{finish: FUNS.superBalanced.canFinish()}"></div>
+                            <div style="position: relative; bottom: 35px;">{{ FUNS.superBalanced.msg() }}<span v-if="player.balancedStart"> ({{ format(player.balancedPoints, 0) }}/{{ format(FUNS.superBalanced.req(), 0) }} balanced points to get super balanced point)</span></div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div v-if="player.tab == 0">
+                    Game made by MrRedShark77 in Mini-GameJam<br>
+                    Thanks for Ideas: Marc & Unpingabot!<br><br>
+                    <h1>Story of Creating the Game</h1><br><br>
+                    <h2>Day 1</h2><br>
+                    - Presented upgrades & balanced points<br><br>
+                    <h2>Day 2</h2><br>
+                    - Presented balanced upgrades<br><br>
+                    <h2>Day 3</h2><br>
+                    - Presented SUPER balanced points & types<br><br>
+                    <h2>Day 4</h2><br>
+                    - Presented Style & Tabs, more upgrades<br><br>
+                    <h2>Day 5</h2><br>
+                    - Achievements, fixed bugs, and more...<br><br>
+                    <h2>Day 6-7</h2><br>
+                    - Final features, ending & credits! The game is READY!
+                </div>
+                <div v-if="player.tab == 1"><div v-if="!player.balancedStart && player.SBPoints.gte(1)">Need start to make balanced points first!</div>
+                    <div v-if="player.balancedStart || player.SBPoints.lte(0)">
+                        {{ format(FUNS.getSpentNumbers(), 1) }}/{{ format(FUNS.getMaxNumbers(), 1) }} Numbers used.<br><br>
+                        <div class='table_center'>
+                            <div v-for='x in FUNS.getSlot()' class='upgrade'>
+                                <div style='height: 30px; display: flex; justify-content: space-between; align-items: center; background-color: #bbb' v-if='!player.start'>
+                                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.addUpgrade(x, -1)">◄</div>
+                                    <div style='font-size: 20px;'>{{ player.upgradeSlot[UPGRADES.getUpgrade(x)] }}</div>
+                                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.addUpgrade(x, 1)">►</div>
+                                </div><div style='height: 150px; background-color: #aaa'>
+                                    Picked Number: <b>{{ format(FUNS.getNumber(x), 1) }}</b><br>
+                                    {{ UPGRADES.types[player.upgradeSlot[UPGRADES.getUpgrade(x)]].desc(x) }}
+                                </div><div style='height: 30px' v-if='!player.start'>
+                                    <input placeholder="Input Number" class='input_upgrade' v-model='player.pickedNumbers[x]'>
+                                </div><div class="set_button" v-on:click='FUNS.setNumber(x)' v-if='!player.start'>Set</div>
+                            </div>
+                        </div>
+                    </div>
+                </div><div v-if="player.tab == 2"><div v-if="!player.balancedStart && player.SBPoints.gte(1)">Need start to make balanced points first!</div>
+                    <div v-if="player.balancedStart || player.SBPoints.lte(0)">
+                        You have <h2>{{ format(player.balancedPoints, 0) }}</h2> balanced points<br>
+                        You have {{ format(UPGRADES.balanced.getUnspentBP(), 0) }} unspent balanced points<br><br>
+                        <div class='table_center'>
+                            <div v-for='x in UPGRADES.balanced.cols' v-if="UPGRADES.balanced[x].unl?UPGRADES.balanced[x].unl():true" class="upgrade balanced" v-on:click="UPGRADES.balanced.buy(x)" v-bind:class="{closed: !UPGRADES.balanced.canBuy(x), can: UPGRADES.balanced.canBuy(x), bought: player.balancedUpgs.includes(x)}">
+                                <div style='height: 100px;'>
+                                    <b>{{ UPGRADES.balanced[x].title }}</b><br>
+                                    {{ UPGRADES.balanced[x].desc() }}
+                                </div>Cost: {{ format(UPGRADES.balanced[x].cost(), 0) }} BP
+                            </div>
+                        </div>
+                    </div>
+                </div><div v-if="player.tab == 3">
+                    You have <h2>{{ format(player.SBPoints, 0) }}</h2> super balanced points<br>
+                    Have {{ format(UPGRADES.superBalanced.getUnspent(), 0) }} unspent super balanced points<br><br>
+                    <div class="table_center">
+                        <div v-for='x in 2' style="width: 45%; margin: 5px; padding: 5px; border: solid 2px black;">
+                            <div v-if='!player.balancedStart'>
+                                <div style='height: 30px; display: flex; justify-content: space-between; align-items: center;'>
+                                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.superBalanced.addType(x, -1)">-</div>
+                                    <div style='font-size: 15px;'>Have <h2>{{ format(player.SBTypes[x], 0) }}</h2> {{ UPGRADES.superBalanced[x].title }} points</div>
+                                    <div class='flat_button' style="width: 30px; font-size: 25px;" v-on:click="UPGRADES.superBalanced.addType(x, 1)">+</div>
+                                </div><br>
+                            </div>
+                            <div v-for='y in player.SBPoints.min(UPGRADES.superBalanced.cols).toNumber()' v-if='UPGRADES.superBalanced[x][y]' style="text-align: left;"
+                                v-bind:style="{color: UPGRADES.superBalanced.unlocked(x, y)?'black':'#555'}">
+                                • {{ y }} - {{ UPGRADES.superBalanced[x][y].desc() }}
+                            </div>
+                        </div>
+                    </div>
+                </div><div v-if="player.tab == 4">
+                    <div v-for="x in ACHS.length" style='width: calc(100%-20px); height: 150px; border-radius: 20px; margin: 10px;' v-bind:style="{'background-color': player.achs.includes(x)?'limegreen':'#bbb'}">
+                        <h2>{{ ACHS[x].title }}</h2><br>
+                        <br>{{ ACHS[x].desc }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span style="cursor: pointer" onclick="save()">Save</span> | <span style="cursor: pointer" onclick="exporty()">Export</span> | <span style="cursor: pointer" onclick="importy()">Import</span> | <span style="cursor: pointer" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</span> | <span style="cursor: pointer" onclick="player.tab = 0">Credits</span>
+        <div id='popup' style='visibility: hidden'>
+            <div id="msg_popup">
+                <h2 id='popup_title' style='font-weight: bold'></h2><br><br>
+                <div id='popup_desc' style='height: 260px;'>
+
+                </div><br>
+                <button onclick="FUNS.popup.remove()" id='popup_button'></button>
+            </div>
+        </div>
+        <div style='display: none'>{{ player.time }}</div>
+    </div>
+<!--客服 开始-->
+<script src="//g8hh.com/static/js/jquery.min.js"></script>
+<link rel="stylesheet" href="//g8hh.com/static/css/kf.css" type="text/css" media="screen" charset="utf-8">
+<script src="//g8hh.com/static/js/kf.js"></script>
+<!-- 客服 结束 -->
+<!--站长统计-->
+    <div style="display: none">
+        <script type="text/javascript" src="https://v1.cnzz.com/z_stat.php?id=1279902880&web_id=1279902880"></script>
+    </div>
+</body>
+</html>
